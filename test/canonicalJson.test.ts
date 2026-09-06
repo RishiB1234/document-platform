@@ -102,3 +102,94 @@ describe("canonicalJson", () => {
     });
   });
 });
+
+/*
+ * A golden fixture: one realistic document, and the exact bytes it must
+ * produce. The unit tests above each isolate one rule; this one guards the
+ * combination, which is what a real document actually exercises. A change that
+ * satisfies every rule separately can still alter the output for a document
+ * that mixes them -- and byte-exactness is not cosmetic here, because the
+ * post-write verification compares uploaded text against this output.
+ *
+ * Synthetic on purpose. Using a real application's document would put personal
+ * data and domain vocabulary into a domain-neutral package; the fixture instead
+ * reproduces the shapes that matter -- deep nesting, arrays of objects, unicode,
+ * decimals and negatives, empty containers, null, and keys that need sorting at
+ * several depths.
+ */
+describe("canonicalJson golden document", () => {
+  const document = {
+    targets: { ceiling: 63, baseline: 52.5, floor: -1, zero: 0 },
+    entries: [
+      { note: "", id: "b", values: [3, 2, 1] },
+      { note: "em—dash, accents: éü, emoji: 🏋", id: "a", values: [] },
+    ],
+    meta: { nested: { deep: { deeper: { z: 1, a: null } } }, "needs-quotes": true, empty: {} },
+    absent: undefined,
+  };
+
+  const golden = [
+    "{",
+    '  "entries": [',
+    "    {",
+    '      "id": "b",',
+    '      "note": "",',
+    '      "values": [',
+    "        3,",
+    "        2,",
+    "        1",
+    "      ]",
+    "    },",
+    "    {",
+    '      "id": "a",',
+    '      "note": "em—dash, accents: éü, emoji: 🏋",',
+    '      "values": []',
+    "    }",
+    "  ],",
+    '  "meta": {',
+    '    "empty": {},',
+    '    "needs-quotes": true,',
+    '    "nested": {',
+    '      "deep": {',
+    '        "deeper": {',
+    '          "a": null,',
+    '          "z": 1',
+    "        }",
+    "      }",
+    "    }",
+    "  },",
+    '  "targets": {',
+    '    "baseline": 52.5,',
+    '    "ceiling": 63,',
+    '    "floor": -1,',
+    '    "zero": 0',
+    "  }",
+    "}",
+    "",
+  ].join("\n");
+
+  it("produces exactly these bytes", () => {
+    expect(canonicalJson(document)).toBe(golden);
+  });
+
+  it("is a fixed point: canonicalizing its own output changes nothing", () => {
+    expect(canonicalJson(JSON.parse(golden) as object)).toBe(golden);
+  });
+
+  it("does not depend on the order the keys were written in", () => {
+    const reordered = {
+      absent: undefined,
+      meta: { "needs-quotes": true, empty: {}, nested: { deep: { deeper: { a: null, z: 1 } } } },
+      entries: document.entries,
+      targets: { zero: 0, floor: -1, baseline: 52.5, ceiling: 63 },
+    };
+    expect(canonicalJson(reordered)).toBe(golden);
+  });
+});
+
+describe("canonicalJson unsupported values", () => {
+  it("names the constructor of a value it cannot represent", () => {
+    expect(() => canonicalJson({ when: new Date(0) })).toThrow(/unsupported Date value/);
+    expect(() => canonicalJson({ seen: new Map() })).toThrow(/unsupported Map value/);
+  });
+});

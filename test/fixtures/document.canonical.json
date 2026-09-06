@@ -1,0 +1,438 @@
+{
+  "checkpoints": [
+    {
+      "id": "6hu7iv8jw9kx ",
+      "label": "bo1cp2dq3er4fs5gt6hu7iv8jw9k",
+      "note": "w9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mza",
+      "status": "p2dq3er",
+      "target": "iv8jw9kx "
+    },
+    {
+      "id": "3er4fs5gt6hu7",
+      "label": " ly-mzan0bo1cp",
+      "note": "t6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt",
+      "status": "mzan0bo",
+      "target": "fs5gt6hu7iv8jw9"
+    },
+    {
+      "id": "0bo1cp2dq3er4f",
+      "label": "7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt",
+      "note": "q3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er",
+      "status": "jw9kx l",
+      "target": "cp2"
+    },
+    {
+      "id": "x ly-mzan0bo1",
+      "label": "4fs5gt6hu7iv8jw9kx ly-mzan0bo1",
+      "note": "n0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0",
+      "status": "gt6hu7i",
+      "target": "-mzan0bo"
+    }
+  ],
+  "exercises": [
+    {
+      "category": "y-mz",
+      "id": "kx ly-mzan0b",
+      "name": "r4fs5gt6hu7iv8j",
+      "notes": "5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu"
+    },
+    {
+      "category": "o1cp2",
+      "id": "an0bo1cp2dq",
+      "name": "hu7iv8jw9kx ly-mz",
+      "notes": "v8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw"
+    },
+    {
+      "category": "er4f",
+      "id": "2dq3er4fs",
+      "name": "9kx ly-mzan0bo1c",
+      "notes": "ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4"
+    },
+    {
+      "category": "6hu7iv8jw",
+      "id": "s5gt6hu7iv8jw9",
+      "name": "zan0bo1cp2dq3er4fs5gt6hu",
+      "notes": "bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3"
+    },
+    {
+      "category": "w9kx",
+      "id": "iv8jw9kx ly",
+      "name": "p2dq3er4fs5gt6hu7iv8jw9k",
+      "notes": "3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5"
+    },
+    {
+      "category": "mzan",
+      "id": " ly-mzan0",
+      "name": "fs5gt6hu7iv8",
+      "notes": "t6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5g"
+    },
+    {
+      "category": "cp2dq",
+      "id": "0bo1cp",
+      "name": "7iv8jw9k",
+      "notes": "jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0"
+    }
+  ],
+  "goals": [
+    {
+      "id": "p2dq3er4fs5gt6hu7",
+      "label": "w9kx ly-mzan0bo1cp2dq3",
+      "note": "fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mza",
+      "status": " ly-mza",
+      "type": "3er4fs5g"
+    },
+    {
+      "id": "mzan0bo1cp2dq3er",
+      "label": "t6hu7iv8jw9kx ly-mz",
+      "note": "cp2dq3er4fs5gt6hu7iv8jw9kx ly-",
+      "status": "7iv8jw9",
+      "type": "0bo1cp2d"
+    },
+    {
+      "id": "jw9kx ly-",
+      "label": "q3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1",
+      "note": "-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9k",
+      "status": "4fs5gt6",
+      "type": "x ly-mza"
+    },
+    {
+      "id": "gt6hu7iv8jw9kx l",
+      "label": "n0bo1cp2dq3er4fs5gt6hu7iv8jw9k",
+      "note": "8jw9kx ly-mzan0bo1cp2dq3er",
+      "status": "1cp2dq3",
+      "type": "u7iv8jw9"
+    },
+    {
+      "id": "dq3er4fs5g",
+      "label": "kx ly-mzan0bo1cp2",
+      "note": "5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er",
+      "status": "y-mzan0",
+      "type": "r4fs5gt6"
+    },
+    {
+      "id": "an0bo1cp2dq3er4f",
+      "label": "hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5",
+      "note": "2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1",
+      "status": "v8jw9kx",
+      "type": "o1cp2d"
+    },
+    {
+      "id": "9kx ly-m",
+      "label": "er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp",
+      "note": "zan0bo1cp2dq3er4f",
+      "status": "s5gt6hu",
+      "type": "ly-mza"
+    }
+  ],
+  "routines": [
+    {
+      "blocks": [
+        {
+          "exerciseId": "-mzan0bo1cp2",
+          "note": "u7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6h",
+          "rir": 2,
+          "targetReps": "gt6h",
+          "targetSets": 3,
+          "tempo": "n0bo1cp2dq"
+        },
+        {
+          "exerciseId": "1cp2dq3er4f",
+          "note": "kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-m",
+          "rir": 2,
+          "targetReps": "8j",
+          "targetSets": 3,
+          "tempo": "dq3er4fs5gt6hu7iv8"
+        },
+        {
+          "exerciseId": "r4fs5gt6h",
+          "note": "",
+          "rir": 2,
+          "targetReps": "y-mz",
+          "targetSets": 3,
+          "tempo": "5gt6hu7iv8jw9kx ly-mza"
+        },
+        {
+          "exerciseId": "hu7iv8jw9kx ly",
+          "note": "2dq3er4fs5gt6hu7iv8jw9",
+          "rir": 2,
+          "targetReps": "o1",
+          "targetSets": 3,
+          "tempo": "v8jw9kx ly"
+        }
+      ],
+      "id": "q3er4fs5gt6hu7i",
+      "name": "x ly-mzan0bo1cp2dq3er4fs5g",
+      "note": "4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo"
+    }
+  ],
+  "sessions": [
+    {
+      "date": "er4fs5gt6h",
+      "entries": [
+        {
+          "exerciseId": "6hu7iv8jw9kx",
+          "note": "iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6h",
+          "sets": [
+            {
+              "load": "bo",
+              "reps": 15,
+              "rir": 0
+            }
+          ]
+        },
+        {
+          "exerciseId": "p2dq3er4fs5",
+          "note": "3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9",
+          "sets": [
+            {
+              "load": "w9",
+              "reps": 21,
+              "rir": 0
+            }
+          ]
+        },
+        {
+          "exerciseId": " ly-mzan0",
+          "note": "t6hu7iv8jw9kx ly-mzan0",
+          "sets": [
+            {
+              "load": "fs",
+              "reps": 14,
+              "rir": 1
+            },
+            {
+              "load": "mz",
+              "reps": 14,
+              "rir": 1
+            }
+          ]
+        },
+        {
+          "exerciseId": "0bo1cp2dq3er4f",
+          "note": "jw9kx ly-mzan0bo1cp2dq3",
+          "sets": [
+            {
+              "load": "7i",
+              "reps": 10,
+              "rir": 1
+            },
+            {
+              "load": "cp",
+              "reps": 10,
+              "rir": 1
+            }
+          ]
+        }
+      ],
+      "flags": "",
+      "id": "9kx ly-mzan0bo1cp2",
+      "note": "zan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp",
+      "routineId": "ly-mzan0bo1cp2d",
+      "type": "s5gt6hu7iv8jw"
+    },
+    {
+      "date": "4fs5gt6hu7",
+      "entries": [
+        {
+          "exerciseId": "u7iv8jw9kx l",
+          "note": "kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6h",
+          "sets": [
+            {
+              "load": "1c",
+              "reps": 8,
+              "rir": 3
+            },
+            {
+              "load": "8j",
+              "reps": 8,
+              "rir": 3
+            },
+            {
+              "load": "dq",
+              "reps": 9,
+              "rir": 1
+            }
+          ]
+        },
+        {
+          "exerciseId": "r4fs5gt6hu7",
+          "note": "hu7iv8jw9kx ly-mzan0bo",
+          "sets": [
+            {
+              "load": "y-",
+              "reps": 15,
+              "rir": 2
+            },
+            {
+              "load": "5g",
+              "reps": 15,
+              "rir": 2
+            },
+            {
+              "load": "an",
+              "reps": 15,
+              "rir": 2
+            }
+          ]
+        },
+        {
+          "exerciseId": "o1cp2dq3e",
+          "note": "er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs",
+          "sets": [
+            {
+              "load": "v8",
+              "reps": 8,
+              "rir": 2
+            },
+            {
+              "load": "2d",
+              "reps": 8,
+              "rir": 2
+            },
+            {
+              "load": "9k",
+              "reps": 10,
+              "rir": 1
+            }
+          ]
+        },
+        {
+          "exerciseId": "ly-mzan0bo1cp2",
+          "note": "bo1cp2dq3er4fs5gt6hu7i",
+          "sets": [
+            {
+              "load": "s5",
+              "reps": 10,
+              "rir": 2
+            },
+            {
+              "load": "za",
+              "reps": 10,
+              "rir": 2
+            },
+            {
+              "load": "6h",
+              "reps": 10,
+              "rir": 2
+            }
+          ]
+        }
+      ],
+      "flags": "iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-m",
+      "id": "x ly-mzan0bo1cp2dq",
+      "note": "n0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs5gt6hu7iv8jw9kx l",
+      "routineId": "-mzan0bo1cp2dq3",
+      "type": "gt6hu7i"
+    }
+  ],
+  "targets": {
+    "hpTarget": 150,
+    "slipLine": 40,
+    "stepsBaseline": 52.5,
+    "stepsCeiling": 63
+  },
+  "weeks": [
+    {
+      "heartPoints": 207,
+      "note": "",
+      "steps": 49,
+      "weekEnding": "an0bo1cp2d"
+    },
+    {
+      "heartPoints": 119,
+      "note": "v8jw",
+      "steps": 38,
+      "weekEnding": "o1cp2dq3er"
+    },
+    {
+      "heartPoints": 241,
+      "note": "",
+      "steps": 47.5,
+      "weekEnding": "2dq3er4fs5"
+    },
+    {
+      "heartPoints": 174,
+      "note": "ly-m",
+      "steps": 39,
+      "weekEnding": "er4fs5gt6h"
+    },
+    {
+      "heartPoints": 112,
+      "note": "zan0",
+      "steps": 38.5,
+      "weekEnding": "s5gt6hu7iv"
+    },
+    {
+      "heartPoints": 65,
+      "note": "bo1cp2dq3er4fs5g",
+      "steps": 27,
+      "weekEnding": "6hu7iv8jw9"
+    },
+    {
+      "heartPoints": 2,
+      "note": "p2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3e",
+      "steps": 19,
+      "weekEnding": "iv8jw9kx l"
+    },
+    {
+      "heartPoints": 16,
+      "note": "",
+      "steps": 42,
+      "weekEnding": "w9kx ly-mz"
+    },
+    {
+      "heartPoints": 184,
+      "note": "",
+      "steps": 53.5,
+      "weekEnding": " ly-mzan0b"
+    },
+    {
+      "heartPoints": 231,
+      "note": "",
+      "steps": 47.6,
+      "weekEnding": "mzan0bo1cp"
+    },
+    {
+      "heartPoints": 273,
+      "note": "",
+      "steps": 58.6,
+      "weekEnding": "0bo1cp2dq3"
+    },
+    {
+      "heartPoints": 307,
+      "note": "jw9kx ly-mzan0b",
+      "steps": 62.5,
+      "weekEnding": "cp2dq3er4f"
+    },
+    {
+      "heartPoints": 209,
+      "note": "x ly-mzan0bo1cp2dq3er4fs5gt6h",
+      "steps": 54,
+      "weekEnding": "q3er4fs5gt"
+    },
+    {
+      "heartPoints": 179,
+      "note": "",
+      "steps": 50.5,
+      "weekEnding": "4fs5gt6hu7"
+    },
+    {
+      "heartPoints": 181,
+      "note": "n0bo1cp2dq3er4fs5gt6hu7iv8jw9kx ly-mzan0b",
+      "steps": 42,
+      "weekEnding": "gt6hu7iv8j"
+    },
+    {
+      "heartPoints": 283,
+      "note": "1cp2dq3er4fs5gt6",
+      "steps": 53,
+      "weekEnding": "u7iv8jw9kx"
+    },
+    {
+      "heartPoints": 338,
+      "note": "dq3er4fs5gt6hu7iv8jw9kx ly-mzan0bo1cp2dq3er4fs",
+      "steps": 52.5,
+      "weekEnding": "8jw9kx ly-"
+    }
+  ]
+}
