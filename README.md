@@ -51,33 +51,24 @@ npm run build      # also runs on install, via prepare, for git consumers
 npm test
 ```
 
-### Install from the lockfile — `npm install` from scratch will fail
+### npm 11 or later is required to install this package
 
-Use `npm ci`. A fresh resolution of this dependency set crashes npm itself:
+Homebrew's `node@22` bundles npm 10.9.8, whose dependency resolver crashes on
+this package's devDependencies:
 
 ```
 npm error Cannot read properties of null (reading 'edgesOut')
 ```
 
-It is an npm bug, not a configuration error, and it is reproducible with a
-`package.json` containing nothing but `"vitest": "4.1.10"`. vitest 4.1.10
-declares six optional peers pinned to exactly `4.1.10`; one of them,
-`@vitest/browser-playwright`, published a `5.0.0` on 2026-09-03, and npm's
-resolver walks into a node it has not materialised and dereferences null.
+It is a bug in that npm, fixed upstream — npm 12 resolves the identical
+`package.json` cleanly, with no flags and no lockfile. If you hit it, upgrade
+npm rather than changing what the package depends on:
 
-**The lockfile is what makes this repository installable.** It was seeded by
-copying fitness-board's `package-lock.json`, whose resolutions predate that
-publication, then letting npm reconcile it against this package's smaller
-dependency set. The resolutions carry over, the resolver is never asked to
-solve the peer graph again, and `npm ci` reproduces the tree exactly.
+```
+npm install -g npm@latest
+```
 
-The general point, worth more than this instance: **an exact version in
-`package.json` does not pin a build — the lockfile does.** `"vitest": "4.1.10"`
-is as exact as a specifier gets and still cannot be resolved from scratch today.
-
-The hazard is specific to a dependency *set*, not to a version, and it is not
-predictable by inspection. Fitness-board pins the same vitest and resolves
-cleanly even with its lockfile deleted — its larger set steers npm around the
-bug. This package's three devDependencies do not. That is the argument for
-installing from a lockfile everywhere: you cannot tell by looking which side of
-the line a given set falls on.
+Note that `export PATH=/usr/local/opt/node@22/bin:$PATH` puts Homebrew's
+bundled npm ahead of the upgraded one on this machine. `npm -v` should report
+11 or later; if it reports 10.x, the upgrade is being shadowed and
+`/usr/local/bin/npm` is the one you want.
