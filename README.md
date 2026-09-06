@@ -7,6 +7,21 @@ guarded editing.
 Extracted from `fitness-board`, which proved these contracts through its stages
 1–8. Consumed as a pinned git dependency; not published to the npm registry.
 
+## How this was built
+
+Written by RishiB1234 with Claude Opus 5 (Anthropic), pair-programming
+throughout. Every commit carries a `Co-Authored-By: Claude Opus 5` trailer, so
+the attribution is in the history rather than only in this paragraph.
+
+The method is worth stating because it shaped the result. The package was
+extracted from a working application one layer at a time, bottom-up, with the
+full suite green before each layer was allowed to land. Every safety property
+was verified by breaking it: mutate the code that enforces the guarantee, watch
+the intended test fail, restore. That pass repeatedly found guarantees resting
+on nothing -- the cache's load guards, the validator's error formatting, a
+revision branch that production probably uses -- each of which had looked tested
+and was not.
+
 ## The rule this package exists to keep
 
 **No reverse dependency.** Nothing here imports an application, names a domain,
