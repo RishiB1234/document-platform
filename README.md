@@ -51,9 +51,28 @@ npm run build      # also runs on install, via prepare, for git consumers
 npm test
 ```
 
-**vitest is pinned to 5.0.0, not fitness-board's 4.1.10.** A fresh resolution of
-4.1.10 crashes npm's peer resolver (`Cannot read properties of null (reading
-'edgesOut')`) because `@vitest/browser-playwright@5.0.0` now exists in its peer
-graph. fitness-board is unaffected only because its lockfile was resolved before
-that package was published. The test runner is a devDependency and part of no
-contract, so the versions need not match.
+### Install from the lockfile — `npm install` from scratch will fail
+
+Use `npm ci`. A fresh resolution of this dependency set crashes npm itself:
+
+```
+npm error Cannot read properties of null (reading 'edgesOut')
+```
+
+It is an npm bug, not a configuration error, and it is reproducible with a
+`package.json` containing nothing but `"vitest": "4.1.10"`. vitest 4.1.10
+declares six optional peers pinned to exactly `4.1.10`; one of them,
+`@vitest/browser-playwright`, published a `5.0.0` on 2026-09-03, and npm's
+resolver walks into a node it has not materialised and dereferences null.
+
+**The lockfile is what makes this repository installable.** It was seeded by
+copying fitness-board's `package-lock.json`, whose resolutions predate that
+publication, then letting npm reconcile it against this package's smaller
+dependency set. The resolutions carry over, the resolver is never asked to
+solve the peer graph again, and `npm ci` reproduces the tree exactly.
+
+The general point, worth more than this instance: **an exact version in
+`package.json` does not pin a build — the lockfile does.** `"vitest": "4.1.10"`
+is as exact as a specifier gets and still cannot be installed today. Both
+repositories depend on their lockfiles surviving; delete one and run
+`npm install` and it will fail the same way.
