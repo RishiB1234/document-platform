@@ -30,7 +30,7 @@ before the next arrives.
 | 1. `document` | `canonicalJson`, `sessionVisibility`, snapshot and config types | **done** — 26 tests |
 | 2. `validation`, `connectivity` | `JsonSchemaValidator` (ajv, type-only), `useOnlineStatus` | **done** — 34 tests |
 | 3. `cache` | validated last-known-good cache, cross-tab channel | **done** — 42 tests |
-| 4. `google` | token provider, library loader, configuration, picker, source, writer | pending |
+| 4. `google` | token provider, library loader, configuration, picker, source, writer, `writeFailures` | **done** — 74 tests |
 | 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save, write failures | pending |
 | 6. `ui`, review components, `build` | React surface | pending |
 
