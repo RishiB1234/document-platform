@@ -5,6 +5,7 @@
  *
  * Layer 1: document.   No dependencies at all, not even on each other.
  * Layer 2: validation, connectivity. Optional peers: ajv (types only), react.
+ * Layer 3: cache. Validated last-known-good store plus the cross-tab channel.
  */
 export { canonicalJson, CanonicalJsonError } from "./document/canonicalJson.js";
 export { visibleSnapshot } from "./document/sessionVisibility.js";
@@ -13,3 +14,7 @@ export type { DriveJsonApplicationConfig } from "./document/DriveJsonApplication
 
 export { JsonSchemaValidator, JsonDocumentValidationError } from "./validation/JsonSchemaValidator.js";
 export { useOnlineStatus } from "./connectivity/useOnlineStatus.js";
+
+export { ValidatedDocumentCache } from "./cache/ValidatedDocumentCache.js";
+export { DocumentCacheChannel } from "./cache/DocumentCacheChannel.js";
+export { useValidatedDocumentCache } from "./cache/useValidatedDocumentCache.js";
