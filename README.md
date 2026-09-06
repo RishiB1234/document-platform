@@ -110,3 +110,7 @@ Note that `export PATH=/usr/local/opt/node@22/bin:$PATH` puts Homebrew's
 bundled npm ahead of the upgraded one on this machine. `npm -v` should report
 11 or later; if it reports 10.x, the upgrade is being shadowed and
 `/usr/local/bin/npm` is the one you want.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
