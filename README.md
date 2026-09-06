@@ -73,6 +73,11 @@ solve the peer graph again, and `npm ci` reproduces the tree exactly.
 
 The general point, worth more than this instance: **an exact version in
 `package.json` does not pin a build — the lockfile does.** `"vitest": "4.1.10"`
-is as exact as a specifier gets and still cannot be installed today. Both
-repositories depend on their lockfiles surviving; delete one and run
-`npm install` and it will fail the same way.
+is as exact as a specifier gets and still cannot be resolved from scratch today.
+
+The hazard is specific to a dependency *set*, not to a version, and it is not
+predictable by inspection. Fitness-board pins the same vitest and resolves
+cleanly even with its lockfile deleted — its larger set steers npm around the
+bug. This package's three devDependencies do not. That is the argument for
+installing from a lockfile everywhere: you cannot tell by looking which side of
+the line a given set falls on.
