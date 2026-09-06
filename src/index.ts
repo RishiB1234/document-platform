@@ -10,6 +10,8 @@
  *          the Drive writer raises. It has no dependencies of its own and sits
  *          below google despite its path, which is kept so that fitness-board's
  *          migration stays a path rewrite rather than a reorganisation.
+ * Layer 5: editing core. The copy-apply-validate-swap boundary, the replay
+ *          engine and its conflict decision, squashing, and the guarded save.
  */
 export { canonicalJson, CanonicalJsonError } from "./document/canonicalJson.js";
 export { visibleSnapshot } from "./document/sessionVisibility.js";
@@ -32,3 +34,14 @@ export { GoogleDriveDocumentSource } from "./google/GoogleDriveDocumentSource.js
 export { GoogleDriveDocumentWriter } from "./google/GoogleDriveDocumentWriter.js";
 export { useGoogleDriveSync } from "./google/useGoogleDriveSync.js";
 export { DocumentMovedBeforeWrite, WriteNotPermitted, WriteUnconfirmed } from "./editing/writeFailures.js";
+
+export { SessionHolder, SessionCommitConflict } from "./editing/SessionHolder.js";
+export { DocumentReplay } from "./editing/DocumentReplay.js";
+export { ReplayConflict } from "./editing/ReplayConflict.js";
+export type { ReplayAdapter, ReplayableSnapshot, ChangeIntent } from "./editing/ReplayAdapter.js";
+export { squashChanges } from "./editing/squashChanges.js";
+export type { SquashAdapter } from "./editing/squashChanges.js";
+export { prepareSave } from "./editing/prepareSave.js";
+export type { SavePlan } from "./editing/prepareSave.js";
+export { saveDocument } from "./editing/saveDocument.js";
+export type { ChangeDescription } from "./editing/ChangeDescription.js";

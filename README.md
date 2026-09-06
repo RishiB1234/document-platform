@@ -31,7 +31,7 @@ before the next arrives.
 | 2. `validation`, `connectivity` | `JsonSchemaValidator` (ajv, type-only), `useOnlineStatus` | **done** — 34 tests |
 | 3. `cache` | validated last-known-good cache, cross-tab channel | **done** — 42 tests |
 | 4. `google` | token provider, library loader, configuration, picker, source, writer, `writeFailures` | **done** — 74 tests |
-| 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save, write failures | pending |
+| 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save | **done** — 124 tests |
 | 6. `ui`, review components, `build` | React surface | pending |
 
 Neither consuming application has migrated yet. fitness-board goes first — it
