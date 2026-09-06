@@ -23,15 +23,21 @@
     "prepare": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage --coverage.include=src/**"
   },
   "devDependencies": {
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/react": "16.3.0",
     "@types/node": "24.0.0",
     "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "4.1.10",
     "ajv": "8.17.1",
     "fake-indexeddb": "6.2.5",
+    "jsdom": "27.0.0",
     "react": "19.2.8",
+    "react-dom": "19.2.8",
     "typescript": "7.0.2",
     "vitest": "4.1.10"
   },

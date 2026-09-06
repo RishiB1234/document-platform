@@ -12,6 +12,9 @@
  *          migration stays a path rewrite rather than a reorganisation.
  * Layer 5: editing core. The copy-apply-validate-swap boundary, the replay
  *          engine and its conflict decision, squashing, and the guarded save.
+ * Layer 6: the React surface -- review components, modal, build stamp. Last,
+ *          because it is the least proven and the only part needing a DOM to
+ *          test. Requires the optional react peer dependency.
  */
 export { canonicalJson, CanonicalJsonError } from "./document/canonicalJson.js";
 export { visibleSnapshot } from "./document/sessionVisibility.js";
@@ -45,3 +48,10 @@ export { prepareSave } from "./editing/prepareSave.js";
 export type { SavePlan } from "./editing/prepareSave.js";
 export { saveDocument } from "./editing/saveDocument.js";
 export type { ChangeDescription } from "./editing/ChangeDescription.js";
+
+export { ChangeSummaryList } from "./editing/ChangeSummaryList.js";
+export { EditingStatusBar } from "./editing/EditingStatusBar.js";
+export { SaveReviewPanel } from "./editing/SaveReviewPanel.js";
+export { NothingToSave, UnrecordedMutation } from "./editing/prepareSave.js";
+export { Modal } from "./ui/Modal.js";
+export { BuildStamp } from "./build/BuildStamp.js";

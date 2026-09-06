@@ -32,7 +32,7 @@ before the next arrives.
 | 3. `cache` | validated last-known-good cache, cross-tab channel | **done** — 42 tests |
 | 4. `google` | token provider, library loader, configuration, picker, source, writer, `writeFailures` | **done** — 74 tests |
 | 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save | **done** — 165 tests |
-| 6. `ui`, review components, `build` | React surface | pending |
+| 6. `ui`, review components, `build` | React surface | **done** — 239 tests, 96.7% |
 
 Neither consuming application has migrated yet. fitness-board goes first — it
 already has a clean platform boundary, so it is an exact oracle for the move —
@@ -49,7 +49,13 @@ with errors that look like project bugs; prefix commands with
 npm run typecheck
 npm run build      # also runs on install, via prepare, for git consumers
 npm test
+npm run coverage   # V8 coverage, mapped back through source maps
 ```
+
+jsdom is opt-in per file, through a `// @vitest-environment jsdom` docblock.
+The default environment is Node: IndexedDB comes from `fake-indexeddb` and
+`BroadcastChannel` is native, and a simulated DOM everywhere would only add
+approximation where none is needed.
 
 ### npm 11 or later is required to install this package
 
