@@ -39,6 +39,23 @@ already has a clean platform boundary, so it is an exact oracle for the move —
 then book-catalog, whose infrastructure is interleaved with its domain and is
 the real test of neutrality.
 
+## Two entry points
+
+```ts
+import { SessionHolder, canonicalJson } from "@rishib1234/document-platform";
+import { Modal, useOnlineStatus }        from "@rishib1234/document-platform/react";
+```
+
+The split keeps `react` a genuinely optional peer dependency. A single barrel
+re-exporting the hooks would make it required in practice, because Node resolves
+every re-export eagerly: a consumer without React could not import the package
+at all, not even for `canonicalJson`. An optional dependency that the only
+entry point demands is not optional.
+
+`ajv` needs no such split. `JsonSchemaValidator` imports it for types only, so
+nothing loads it at runtime and an application that supplies its own parser
+never installs it.
+
 ## Working notes
 
 Node 22 or later. The default shell `node` in this environment is v16 and fails
