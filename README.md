@@ -28,7 +28,7 @@ before the next arrives.
 | Layer | Contents | State |
 | --- | --- | --- |
 | 1. `document` | `canonicalJson`, `sessionVisibility`, snapshot and config types | **done** — 26 tests |
-| 2. `validation`, `connectivity` | `JsonSchemaValidator` (ajv, type-only), `useOnlineStatus` | pending |
+| 2. `validation`, `connectivity` | `JsonSchemaValidator` (ajv, type-only), `useOnlineStatus` | **done** — 34 tests |
 | 3. `cache` | validated last-known-good cache, cross-tab channel | pending |
 | 4. `google` | token provider, library loader, configuration, picker, source, writer | pending |
 | 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save, write failures | pending |
