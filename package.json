@@ -1,6 +1,6 @@
 {
   "name": "@rishib1234/document-platform",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Domain-neutral platform for document-backed web applications: validated snapshots, caching, Google Drive access, deterministic serialization, and guarded editing.",
   "type": "module",
   "license": "MIT",

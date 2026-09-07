@@ -40,4 +40,5 @@ export type { SquashAdapter } from "./editing/squashChanges.js";
 export { prepareSave, NothingToSave, UnrecordedMutation } from "./editing/prepareSave.js";
 export type { SavePlan } from "./editing/prepareSave.js";
 export { saveDocument } from "./editing/saveDocument.js";
+export type { SaveOutcome } from "./editing/saveDocument.js";
 export type { ChangeDescription } from "./editing/ChangeDescription.js";
