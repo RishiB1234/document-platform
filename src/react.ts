@@ -15,3 +15,4 @@ export { EditingStatusBar } from "./editing/EditingStatusBar.js";
 export { SaveReviewPanel, explainRefusal } from "./editing/SaveReviewPanel.js";
 export { Modal } from "./ui/Modal.js";
 export { BuildStamp } from "./build/BuildStamp.js";
+export type { BuildIdentity } from "./build/BuildStamp.js";
