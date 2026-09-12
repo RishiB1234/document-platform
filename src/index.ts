@@ -16,6 +16,9 @@ export { canonicalJson, CanonicalJsonError } from "./document/canonicalJson.js";
 export { visibleSnapshot } from "./document/sessionVisibility.js";
 export type { ValidatedDocumentSnapshot, CachedValidatedDocument } from "./document/ValidatedDocumentSnapshot.js";
 export type { DriveJsonApplicationConfig } from "./document/DriveJsonApplicationConfig.js";
+export type { DocumentSource } from "./document/DocumentSource.js";
+export { BundledDocumentSource } from "./document/BundledDocumentSource.js";
+export { DocumentDownloader } from "./document/DocumentDownloader.js";
 
 export { JsonSchemaValidator, JsonDocumentValidationError } from "./validation/JsonSchemaValidator.js";
 

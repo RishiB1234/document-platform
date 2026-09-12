@@ -4,8 +4,9 @@ Domain-neutral platform for document-backed web applications — validated
 snapshots, caching, Google Drive access, deterministic serialization, and
 guarded editing.
 
-Extracted from `fitness-board`, which proved these contracts through its stages
-1–8. Consumed as a pinned git dependency; not published to the npm registry.
+Every contract here was proven by a real application before it was extracted;
+none was designed for a hypothetical one. Consumed as a pinned git dependency;
+not published to the npm registry.
 
 ## How this was built
 
@@ -49,10 +50,22 @@ before the next arrives.
 | 5. `editing` core | `SessionHolder`, `DocumentReplay`, `ReplayAdapter`, squash, prepare/save | **done** — 165 tests |
 | 6. `ui`, review components, `build` | React surface | **done** — 239 tests, 96.7% |
 
-Neither consuming application has migrated yet. fitness-board goes first — it
-already has a clean platform boundary, so it is an exact oracle for the move —
-then book-catalog, whose infrastructure is interleaved with its domain and is
-the real test of neutrality.
+Every layer is extracted and released. What remains is validation by adoption,
+which happens in the consuming repositories and is tracked there: this package
+names no application, and a README that listed them would be the same reverse
+dependency the code refuses.
+
+## TODO
+
+- **Export `ConcurrentWriterDetected`.** `saveDocument` throws it when the
+  document moves a second time, but it is not on the public surface, so a
+  consumer cannot `instanceof` it — only match on `error.name` or surface the
+  raw message. Every other error a caller is expected to branch on
+  (`NothingToSave`, `UnrecordedMutation`, `ReplayConflict`) is exported. Same
+  shape as `2eebe65` (`SaveOutcome`) and `1753f7c` (`BuildIdentity`): a type or
+  class the documented flow makes reachable that the barrel omits. Worth one
+  sweep of `index.ts` against everything the public functions throw and return,
+  rather than a fourth single-symbol fix.
 
 ## Two entry points
 

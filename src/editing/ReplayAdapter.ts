@@ -5,8 +5,8 @@
  * conflicts is platform's, because that is a data-integrity rule that must not
  * vary between applications. Knowing *which record* a change refers to and
  * *what makes two records equal* is the application's, because that genuinely
- * differs -- fitness-board looks records up by slug, book-catalog has no stable
- * identity and must locate positionally.
+ * differs -- one document's records carry a stable key to look up by, while
+ * another has no identity of its own and must be located positionally.
  *
  * An adapter therefore only answers questions about records. It never decides
  * applied, no-op, or conflict, and `mutate` must contain no conflict logic.
