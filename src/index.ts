@@ -22,6 +22,15 @@ export { DocumentDownloader } from "./document/DocumentDownloader.js";
 
 export { JsonSchemaValidator, JsonDocumentValidationError } from "./validation/JsonSchemaValidator.js";
 
+export {
+  RECORD_ID_ALPHABET,
+  RECORD_ID_LENGTH,
+  isRecordId,
+  recordIdOf,
+  mintRecordId,
+} from "./identity/recordId.js";
+export type { TakenIds } from "./identity/recordId.js";
+
 export { ValidatedDocumentCache } from "./cache/ValidatedDocumentCache.js";
 export { DocumentCacheChannel } from "./cache/DocumentCacheChannel.js";
 
