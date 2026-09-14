@@ -65,6 +65,8 @@ import {
   ValidatedDocumentCache,
   WriteUnconfirmed,
   canonicalJson,
+  isRecordId,
+  mintRecordId,
   prepareSave,
   saveDocument,
   visibleSnapshot,
@@ -134,43 +136,30 @@ type WarSession = {
 };
 ```
 
-Every persisted record has a stable serial ID. Troy War Simulator uses the
-same 10-character format for armies and battles, and requires IDs to be unique
-across the whole document. An ID identifies the record for its entire lifetime:
-editing, moving, or replaying a record never changes it.
+Every persisted record has a stable record ID. Troy War Simulator uses the
+platform's 10-character format for armies and battles, and requires IDs to be
+unique across the whole document. An ID identifies the record for its entire
+lifetime: editing, moving, or replaying a record never changes it.
+
+The format and the generator come from the platform; which objects are records
+is the application's to say:
 
 ```ts
-const SERIAL_ID = /^[23456789abcdefghjkmnpqrstvwxyz]{10}$/;
-const SERIAL_ALPHABET = "23456789abcdefghjkmnpqrstvwxyz";
-
 function allRecordIds(document: WarDocument): Set<string> {
   return new Set([
     ...document.armies.map(army => army.id),
     ...document.battles.map(battle => battle.id),
   ]);
 }
-
-function mintSerialId(document: WarDocument): string {
-  const used = allRecordIds(document);
-
-  while (true) {
-    let id = "";
-    while (id.length < 10) {
-      const [byte] = crypto.getRandomValues(new Uint8Array(1));
-      const unbiasedLimit = 256 - (256 % SERIAL_ALPHABET.length);
-      if (byte < unbiasedLimit) id += SERIAL_ALPHABET[byte % SERIAL_ALPHABET.length];
-    }
-
-    if (!used.has(id)) return id;
-  }
-}
 ```
 
-ID creation belongs to the application because IDs are part of its document
-contract. The platform consumes them through `identityOf` and `locate`; it does
-not generate or reinterpret them. Applications can use the `mintSerialId`
-generator provided above: pass the current document so it can check the new ID
-against every existing army and battle ID before returning it.
+`mintRecordId` takes anything with a `has(id)` method, draws from
+`crypto.getRandomValues` without modulo bias, and retries a bounded number of
+times if the new ID is already taken, throwing rather than falling back to a
+predictable value. `RECORD_ID_ALPHABET` and `RECORD_ID_LENGTH` are exported for
+anything outside TypeScript that must agree with the format. Traversal stays in
+the application: only Troy War Simulator knows that armies and battles are its
+records, so it builds the taken set and the platform never walks the document.
 
 Here is a deliberately small parser. A production app would usually report
 more precise errors and validate every nested field:
@@ -194,8 +183,8 @@ function parseWarDocument(text: string): WarDocument {
     ...document.battles.map(battle => battle.id),
   ];
 
-  if (ids.some(id => !SERIAL_ID.test(id))) {
-    throw new Error("Every record needs a valid 10-character serial ID");
+  if (!ids.every(isRecordId)) {
+    throw new Error("Every record needs a valid 10-character record ID");
   }
   if (new Set(ids).size !== ids.length) {
     throw new Error("Record IDs must be unique across the whole document");
@@ -338,7 +327,7 @@ reuses it; it never generates a replacement:
 const base = holder.current();
 const draft = structuredClone(base);
 const newArmy: Army = {
-  id: mintSerialId(draft.data),
+  id: mintRecordId(allRecordIds(draft.data)),
   name: "Myrmidons",
   strength: 300,
 };
@@ -589,6 +578,8 @@ The core entry point exports:
 - Document handling: `canonicalJson`, `CanonicalJsonError`, `visibleSnapshot`,
   `BundledDocumentSource`, `DocumentDownloader`, and document/snapshot types.
 - Validation: `JsonSchemaValidator`, `JsonDocumentValidationError`.
+- Record identity: `RECORD_ID_ALPHABET`, `RECORD_ID_LENGTH`, `isRecordId`,
+  `recordIdOf`, `mintRecordId`, and the `TakenIds` type.
 - Cache: `ValidatedDocumentCache`, `DocumentCacheChannel`.
 - Google Drive: `GoogleDriveConfiguration`, `GoogleAccessTokenProvider`,
   `GoogleBrowserLibraries`, `GoogleDriveFilePicker`,
@@ -610,7 +601,7 @@ The package is consumed from a pinned Git tag rather than the npm registry:
 ```json
 {
   "dependencies": {
-    "@rishib1234/document-platform": "github:RishiB1234/document-platform#v0.1.3"
+    "@rishib1234/document-platform": "github:RishiB1234/document-platform#v0.1.5"
   }
 }
 ```
@@ -654,12 +645,6 @@ application proves the requirement.
 
 ### TODO
 
-- Extract the domain-neutral serial-ID utilities proven by book-catalog into
-  this package: the 10-character alphabet and length, format validation, secure
-  minting against a caller-supplied set of taken IDs, and bounded collision
-  retries. Keep document traversal and the definition of which objects are
-  records in each application. After the platform export exists, update the
-  Troy War Simulator example to import it instead of defining `mintSerialId`.
 - **HIGH PRIORITY:** Stop edits made during a save from being silently lost. The
   candidate is serialized before the first await, and a successful save then
   installs the verified snapshot as a fresh session, discarding anything
