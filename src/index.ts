@@ -43,7 +43,7 @@ export { GoogleDriveDocumentSource } from "./google/GoogleDriveDocumentSource.js
 export { GoogleDriveDocumentWriter } from "./google/GoogleDriveDocumentWriter.js";
 export { DocumentMovedBeforeWrite, WriteNotPermitted, WriteUnconfirmed } from "./editing/writeFailures.js";
 
-export { SessionHolder, SessionCommitConflict } from "./editing/SessionHolder.js";
+export { SessionHolder, SessionCommitConflict, SessionLocked } from "./editing/SessionHolder.js";
 export { DocumentReplay } from "./editing/DocumentReplay.js";
 export { ReplayConflict } from "./editing/ReplayConflict.js";
 export type { ReplayResult } from "./editing/DocumentReplay.js";
@@ -54,4 +54,6 @@ export { prepareSave, NothingToSave, UnrecordedMutation } from "./editing/prepar
 export type { SavePlan } from "./editing/prepareSave.js";
 export { saveDocument, ConcurrentWriterDetected } from "./editing/saveDocument.js";
 export type { SaveOutcome, SaveResult } from "./editing/saveDocument.js";
+export { saveSession, SaveInProgress, SavedButNotAdopted } from "./editing/saveSession.js";
+export type { DuringSave, SaveSessionParts, SaveSessionResult } from "./editing/saveSession.js";
 export type { ChangeDescription } from "./editing/ChangeDescription.js";

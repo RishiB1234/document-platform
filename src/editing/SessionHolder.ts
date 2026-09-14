@@ -31,8 +31,17 @@ export class SessionCommitConflict extends Error {
   }
 }
 
+/** A commit was attempted while the holder is locked for a save. */
+export class SessionLocked extends Error {
+  constructor() {
+    super("Editing is paused while this document is being saved");
+    this.name = "SessionLocked";
+  }
+}
+
 export class SessionHolder<TSession> {
   private session: TSession;
+  private locked = false;
 
   /**
    * @param initial     a session that has already been validated.
@@ -54,6 +63,7 @@ export class SessionHolder<TSession> {
    * nothing here mutates the caller's draft.
    */
   commit(base: TSession, next: TSession): void {
+    if (this.locked) throw new SessionLocked();
     if (this.session !== base) throw new SessionCommitConflict();
     // Validate before swapping, never after: a failed validation must leave
     // the previous session in place rather than needing to be undone.
@@ -65,14 +75,39 @@ export class SessionHolder<TSession> {
    * Best-effort install for asynchronous callers, such as the save flow
    * adopting a verified post-upload snapshot. Returns false when the session
    * moved while the caller was awaiting, so it can decline rather than discard
-   * an edit made in the meantime. Declining is safe: the local session still
-   * holds every recorded change, and the next save replays them -- the ones
-   * already written land as idempotent no-ops.
+   * an edit made in the meantime. Declining alone is not enough after a save:
+   * a saved change and a later edit to the same record squash into one that
+   * conflicts with the store. `saveSession` carries later edits over instead.
    */
   tryCommit(base: TSession, next: TSession): boolean {
+    if (this.locked) throw new SessionLocked();
     if (this.session !== base) return false;
     this.validate(next);
     this.session = next;
     return true;
+  }
+
+  /** True while a save holds the lock and every commit is refused. */
+  isLocked(): boolean {
+    return this.locked;
+  }
+
+  /**
+   * Refuse every commit until the returned release is called.
+   *
+   * For a save that would rather freeze editing than carry edits across it.
+   * A second lock while one is held throws: two saves of one session at once
+   * is a caller bug, and silently sharing the lock would let the first release
+   * unfreeze editing under the second. Releasing twice is harmless.
+   */
+  lock(): () => void {
+    if (this.locked) throw new SessionLocked();
+    this.locked = true;
+    let released = false;
+    return () => {
+      if (released) return;
+      released = true;
+      this.locked = false;
+    };
   }
 }
