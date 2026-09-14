@@ -688,12 +688,6 @@ document, validation, connectivity, cache, Google Drive, editing, save, and
 React UI surfaces. New capabilities are added only after a real consuming
 application proves the requirement.
 
-### TODO
-
-- Move book-catalog onto `saveSession`: it installs the saved snapshot as a
-  fresh session today, losing edits made mid-save (Codex review of its PR #2,
-  finding #1). Then check fitness-board for the same gap.
-
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
