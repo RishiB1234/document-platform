@@ -40,7 +40,7 @@ Google Drive or bundled JSON
 | Google Drive | Configure one expected file, authenticate, open the picker, read metadata and content, check edit permission, upload, and verify the result |
 | Cache | Keep the last validated snapshot in IndexedDB and notify other tabs when it changes |
 | Editing | Install immutable edit sessions atomically, replay add/update/delete changes, detect conflicts, and squash repeated edits to the same record |
-| Saving | Reject empty or invalid saves, detect unrecorded mutation, rebase once if the document moved, and preserve local edits when saving cannot continue safely |
+| Saving | Reject empty or invalid saves, detect unrecorded mutation, rebase once if the document moved, carry over or block edits made during a save, and preserve local edits when saving cannot continue safely |
 | React UI | Online status, Drive and cache hooks, editing status, change summaries, save review, modal, and build stamp components |
 
 The core package has no React runtime requirement. React hooks and components
@@ -61,14 +61,16 @@ import {
   GoogleDriveDocumentWriter,
   GoogleDriveFilePicker,
   ReplayConflict,
+  SavedButNotAdopted,
   SessionHolder,
+  SessionLocked,
   ValidatedDocumentCache,
   WriteUnconfirmed,
   canonicalJson,
   isRecordId,
   mintRecordId,
   prepareSave,
-  saveDocument,
+  saveSession,
   visibleSnapshot,
   type ChangeIntent,
   type ReplayAdapter,
@@ -453,7 +455,8 @@ const descriptions = plan.changes.map(change => {
 
 ### 6. Save with conflict protection
 
-`saveDocument` coordinates preparation, writing, and one bounded rebase:
+`saveSession` saves the holder's session (preparation, writing, one bounded
+rebase) and then moves the holder onto what was saved:
 
 ```ts
 const prepareWarSave = (session: WarSession, base: ValidatedDocumentSnapshot<WarDocument>) =>
@@ -472,12 +475,11 @@ const saveParts = {
   reload: () => source.load(false).then(requireSnapshot),
   replay,
   isMoved: (error: unknown) => error instanceof DocumentMovedBeforeWrite,
+  changes: (session: WarSession) => session.changes,
+  intent: (change: ArmyChange) => change.intent,
 };
 
-const result = await saveDocument(session, snapshot, saveParts);
-
-const adopted = createSession(result.snapshot);
-holder.tryCommit(session, adopted);
+const result = await saveSession(holder, snapshot, saveParts);
 await cache.save(result.snapshot, new Date().toISOString());
 ```
 
@@ -501,14 +503,51 @@ on it by type:
 
 ```ts
 try {
-  await saveDocument(session, snapshot, saveParts);
+  await saveSession(holder, snapshot, saveParts);
 } catch (error) {
   if (error instanceof ReplayConflict) showConflict(error);
   else if (error instanceof ConcurrentWriterDetected) askToRetryLater();
   else if (error instanceof WriteUnconfirmed) enterRecovery();
+  else if (error instanceof SavedButNotAdopted) useSavedBase(error.saved.snapshot);
   else throw error;
 }
 ```
+
+#### Editing while a save runs
+
+Choose what happens to edits made during the upload.
+
+**Carry over** (default). Editing continues. After the write is verified, edits
+made during the save are replayed onto the saved document and stay pending for
+the next save:
+
+```ts
+const result = await saveSession(holder, snapshot, saveParts);
+result.carried; // edits made during the save, still pending
+```
+
+**Block.** Editing pauses. Every `holder.commit` throws `SessionLocked` until
+the save settles, whether it succeeds or fails:
+
+```ts
+await saveSession(holder, snapshot, saveParts, { duringSave: "block" });
+
+// In the edit path, or disable the controls with holder.isLocked():
+try {
+  holder.commit(base, draft);
+} catch (error) {
+  if (error instanceof SessionLocked) showNotice("Saving… try again in a moment");
+  else throw error;
+}
+```
+
+If carrying over fails after the write succeeded, `saveSession` throws
+`SavedButNotAdopted`. Its `reason` is `conflict` (a rebase brought in another
+writer's change to the same record), `rewritten` (earlier changes were altered
+mid-save, for example by undo) or `invalid`. `error.saved` is the verified
+result, which becomes the app's new base; the holder keeps every change. A
+second `saveSession` on the same holder while one is running throws
+`SaveInProgress`.
 
 ### 7. Use the React hooks
 
@@ -585,7 +624,11 @@ The core entry point exports:
   `GoogleBrowserLibraries`, `GoogleDriveFilePicker`,
   `GoogleDriveDocumentSource`, and `GoogleDriveDocumentWriter`.
 - Editing: `SessionHolder`, `DocumentReplay`, `squashChanges`, `prepareSave`,
-  `saveDocument`, their adapter/result types, and their exported failure cases.
+  `saveDocument`, `saveSession`, and their adapter, option and result types.
+- Editing failures: `SessionCommitConflict`, `SessionLocked`, `ReplayConflict`,
+  `UnsquashableHistory`, `NothingToSave`, `UnrecordedMutation`,
+  `ConcurrentWriterDetected`, `SaveInProgress`, `SavedButNotAdopted`,
+  `DocumentMovedBeforeWrite`, `WriteNotPermitted`, `WriteUnconfirmed`.
 
 The React entry point exports `useOnlineStatus`, `useValidatedDocumentCache`,
 `useGoogleDriveSync`, `ChangeSummaryList`, `EditingStatusBar`,
@@ -645,16 +688,9 @@ application proves the requirement.
 
 ### TODO
 
-- **HIGH PRIORITY:** Stop edits made during a save from being silently lost. The
-  candidate is serialized before the first await, and a successful save then
-  installs the verified snapshot as a fresh session, discarding anything
-  recorded while the upload was in flight. Found as the top High finding (#1) in
-  Codex's adversarial review of book-catalog PR #2 (a copy given away mid-save
-  reappears). There every edit kind has the same hole, and only Save and Cancel
-  are disabled while saving. Decide whether the platform's editing surface blocks
-  mutation while a save runs (the simple answer), or carries changes recorded
-  after the plan was prepared over to the new session via replay. Then check
-  fitness-board for the same gap.
+- Move book-catalog onto `saveSession`: it installs the saved snapshot as a
+  fresh session today, losing edits made mid-save (Codex review of its PR #2,
+  finding #1). Then check fitness-board for the same gap.
 
 ## License
 

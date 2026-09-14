@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { SessionCommitConflict, SessionHolder } from "../src/editing/SessionHolder";
+import { SessionCommitConflict, SessionHolder, SessionLocked } from "../src/editing/SessionHolder";
 
 type Session = { readonly value: string };
 
@@ -43,9 +43,8 @@ describe("SessionHolder", () => {
   });
 
   it("declines a best-effort install when the session moved, without touching state", () => {
-    // The save flow adopting a post-upload snapshot while the user edited
-    // mid-flight. Declining is safe: the local session keeps every recorded
-    // change, and the next save replays them as no-ops.
+    // An asynchronous install racing an edit made while it awaited. Declining
+    // keeps the edit; carrying it across a save is saveSession's job.
     const base: Session = { value: "one" };
     const holder = new SessionHolder(base, valid);
     const edited: Session = { value: "edited mid-flight" };
@@ -105,5 +104,50 @@ describe("SessionHolder", () => {
 
     expect(() => holder.tryCommit(base, { value: "" })).toThrow("empty session");
     expect(holder.current()).toBe(base);
+  });
+
+  describe("lock", () => {
+    it("refuses every commit while held, and accepts them again once released", () => {
+      const base: Session = { value: "one" };
+      const holder = new SessionHolder(base, valid);
+      const release = holder.lock();
+
+      expect(holder.isLocked()).toBe(true);
+      expect(() => holder.commit(base, { value: "two" })).toThrow(SessionLocked);
+      expect(() => holder.tryCommit(base, { value: "two" })).toThrow(SessionLocked);
+      expect(holder.current()).toBe(base);
+
+      release();
+      expect(holder.isLocked()).toBe(false);
+      holder.commit(base, { value: "two" });
+      expect(holder.current().value).toBe("two");
+    });
+
+    /*
+     * Locked outranks stale: a caller told "conflict" would reload and retry
+     * straight into the lock, where "locked" tells them to wait.
+     */
+    it("reports the lock before staleness", () => {
+      const base: Session = { value: "one" };
+      const holder = new SessionHolder(base, valid);
+      holder.commit(base, { value: "moved on" });
+      holder.lock();
+      expect(() => holder.commit(base, { value: "stale" })).toThrow(SessionLocked);
+    });
+
+    it("refuses a second lock, so one release cannot unfreeze another save", () => {
+      const holder = new SessionHolder<Session>({ value: "one" }, valid);
+      holder.lock();
+      expect(() => holder.lock()).toThrow(SessionLocked);
+    });
+
+    it("ignores a repeated release rather than releasing a later lock", () => {
+      const holder = new SessionHolder<Session>({ value: "one" }, valid);
+      const first = holder.lock();
+      first();
+      holder.lock();
+      first();
+      expect(holder.isLocked()).toBe(true);
+    });
   });
 });
