@@ -646,7 +646,7 @@ The package is consumed from a pinned Git tag rather than the npm registry:
 ```json
 {
   "dependencies": {
-    "@rishib1234/document-platform": "github:RishiB1234/document-platform#v0.1.5"
+    "@rishib1234/document-platform": "github:RishiB1234/document-platform#v0.1.6"
   }
 }
 ```
