@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { CanonicalJsonError } from "../src/document/canonicalJson";
 import { DocumentReplay } from "../src/editing/DocumentReplay";
 import { prepareSave } from "../src/editing/prepareSave";
 import type { ChangeIntent, ReplayAdapter, ReplayableSnapshot } from "../src/editing/ReplayAdapter";
@@ -87,7 +88,6 @@ function parts(during: () => void = () => {}, over: Partial<SaveSessionParts<Sna
     replay,
     isMoved: (error: unknown) => error === MOVED,
     changes: (session: Session) => session.changes,
-    intent: (change: Change) => change,
     ...over,
   };
 }
@@ -149,6 +149,58 @@ describe("saveSession, carrying edits over (the default)", () => {
 
     expect(result.outcome).toBe("written-after-rebase");
     expect(holder.current().records).toEqual([{ id: "a", text: "B" }, { id: "b", text: "Q" }, { id: "c", text: "theirs" }]);
+  });
+
+  /*
+   * Another writer made the same edit, so replay drops it as a no-op. Nothing
+   * is pending, and `carried` must not say otherwise.
+   */
+  it("does not count a carried edit the rebased save already satisfies", async () => {
+    const holder = editedHolder();
+    const theirs = snapshot([{ id: "a", text: "A" }, { id: "b", text: "Q" }]);
+    let attempts = 0;
+    const result = await saveSession(holder, base, parts(undefined, {
+      write: async (candidateText) => {
+        attempts += 1;
+        if (attempts === 1) throw MOVED;
+        edit(holder, update("b", "P", "Q"));
+        return snapshot(JSON.parse(candidateText) as Note[]);
+      },
+      reload: async () => theirs,
+    }));
+
+    expect(result.carried).toBe(0);
+    expect(holder.current().changes).toEqual([]);
+    expect(holder.current().records).toEqual([{ id: "a", text: "B" }, { id: "b", text: "Q" }]);
+  });
+
+  it("refuses a change that cannot be compared before anything is written", async () => {
+    const holder = new SessionHolder<Session>(adapter.createSession(base), () => {});
+    const current = holder.current();
+    const odd = { ...update("a", "A", "B"), recordedAt: new Date(0) } as unknown as Change;
+    holder.commit(current, { ...current, changes: [odd], records: [{ id: "a", text: "B" }, { id: "b", text: "P" }] });
+    let written = false;
+
+    await expect(saveSession(holder, base, parts(undefined, { write: async () => { written = true; return base; } }))).rejects.toThrow(CanonicalJsonError);
+    expect(written).toBe(false);
+  });
+
+  /*
+   * The saved change was replaced mid-save by one that cannot be compared.
+   * Uncomparable must mean "different": treating it as the saved change would
+   * leave an empty tail and silently install the saved document over it.
+   */
+  it("treats a mid-save change that cannot be compared as a rewrite", async () => {
+    const holder = editedHolder();
+    const replace = () => {
+      const current = holder.current();
+      const odd = { ...update("a", "A", "C"), recordedAt: new Date(0) } as unknown as Change;
+      holder.commit(current, { ...current, changes: [odd], records: [{ id: "a", text: "C" }, { id: "b", text: "P" }] });
+    };
+
+    const error = await saveSession(holder, base, parts(replace)).catch((caught: unknown) => caught);
+    expect((error as SavedButNotAdopted<Snapshot>).reason).toBe("rewritten");
+    expect(holder.current().records).toEqual([{ id: "a", text: "C" }, { id: "b", text: "P" }]);
   });
 
   it("reports a carried edit that conflicts with the rebased save, keeping the session and the saved result", async () => {

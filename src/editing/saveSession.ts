@@ -1,7 +1,7 @@
 import { canonicalJson } from "../document/canonicalJson.js";
-import type { DocumentReplay } from "./DocumentReplay.js";
+import type { DocumentReplay, ReplayResult } from "./DocumentReplay.js";
 import type { SavePlan } from "./prepareSave.js";
-import type { ChangeIntent, ReplayableSnapshot } from "./ReplayAdapter.js";
+import type { ReplayableSnapshot } from "./ReplayAdapter.js";
 import { ReplayConflict } from "./ReplayConflict.js";
 import { saveDocument, type SaveResult } from "./saveDocument.js";
 import type { SessionHolder } from "./SessionHolder.js";
@@ -18,7 +18,12 @@ import type { SessionHolder } from "./SessionHolder.js";
 export type DuringSave = "carry-over" | "block";
 
 export type SaveSessionResult<TSnapshot> = SaveResult<TSnapshot> & {
-  /** Changes recorded during the save and replayed onto the saved document. */
+  /**
+   * Changes recorded during the save that were replayed onto the saved
+   * document and are still pending. Excludes any the saved document already
+   * satisfied -- such as another writer's identical edit arriving by rebase --
+   * because replay drops those rather than recording them.
+   */
   carried: number;
 };
 
@@ -67,8 +72,12 @@ export type SaveSessionParts<TSnapshot extends ReplayableSnapshot, TSession, TCh
   reload: () => Promise<TSnapshot>;
   replay: DocumentReplay<TSnapshot, TSession, TChange, TRecord>;
   isMoved: (error: unknown) => boolean;
+  /**
+   * Recorded changes, in order. Each must be plain JSON data: carrying over
+   * compares whole changes by canonical JSON, and a change that cannot be
+   * canonicalized is refused before anything is written.
+   */
   changes: (session: TSession) => readonly TChange[];
-  intent: (change: TChange) => ChangeIntent<TRecord>;
 };
 
 const saving = new WeakSet<object>();
@@ -100,6 +109,9 @@ export async function saveSession<TSnapshot extends ReplayableSnapshot, TSession
 
   try {
     const session = holder.current();
+    // Taken before the write, so a change that cannot be compared fails while
+    // nothing has reached the store, rather than after the write has landed.
+    const savedChanges = parts.changes(session).map((change) => canonicalJson(change));
     const release = options.duringSave === "block" ? holder.lock() : () => {};
     let saved: SaveResult<TSnapshot>;
     try {
@@ -108,7 +120,7 @@ export async function saveSession<TSnapshot extends ReplayableSnapshot, TSession
       // Released before adopting: the install below is itself a commit.
       release();
     }
-    return { ...saved, carried: adopt(holder, session, saved, parts) };
+    return { ...saved, carried: adopt(holder, session, savedChanges, saved, parts) };
   } finally {
     saving.delete(holder);
   }
@@ -118,28 +130,39 @@ export async function saveSession<TSnapshot extends ReplayableSnapshot, TSession
 function adopt<TSnapshot extends ReplayableSnapshot, TSession, TChange, TRecord>(
   holder: SessionHolder<TSession>,
   session: TSession,
+  savedChanges: readonly string[],
   saved: SaveResult<TSnapshot>,
   parts: SaveSessionParts<TSnapshot, TSession, TChange, TRecord>,
 ): number {
   const current = holder.current();
-  const before = parts.changes(session);
   const now = parts.changes(current);
 
   // The later edits are the tail after the changes that were saved, which is
-  // only meaningful if those are still its prefix. Compared by intent rather
-  // than identity: sessions are copied to be edited, so the change objects are
-  // usually clones. An undo that removed a saved change and recorded another
-  // in its place would pass a length check and silently drop both.
+  // only meaningful if those are still its prefix. Compared as whole changes,
+  // by canonical JSON:
+  //
+  //   - Not by identity. Sessions are copied to be edited, so the change
+  //     objects are usually clones.
+  //   - Not by length. An undo that removed a saved change and recorded
+  //     another in its place passes a length check and silently drops both.
+  //   - Not by intent. An intent need not say which record it targets -- a
+  //     positional adapter keeps the target on the change -- so `slot 0: A->B`
+  //     and `slot 1: A->B` share an intent and are different edits.
+  //
+  // The whole change is sufficient because it is all replay ever sees:
+  // `locate` and `mutate` receive the session and the change, nothing else.
+  // Two changes with equal canonical JSON therefore replay identically. The
+  // comparison can only err towards "rewritten" -- say, a change rebuilt with
+  // a fresh timestamp -- which refuses loudly instead of losing an edit.
   const prefixKept =
     current === session ||
-    (now.length >= before.length &&
-      before.every((change, index) => canonicalJson(parts.intent(change)) === canonicalJson(parts.intent(now[index]!))));
+    (now.length >= savedChanges.length && savedChanges.every((text, index) => sameChange(text, now[index])));
   if (!prefixKept) throw new SavedButNotAdopted("rewritten", saved);
 
-  const tail = now.slice(before.length);
-  let next: TSession;
+  const tail = now.slice(savedChanges.length);
+  let replayed: ReplayResult<TSession>;
   try {
-    next = parts.replay.replayChanges(tail, saved.snapshot).session;
+    replayed = parts.replay.replayChanges(tail, saved.snapshot);
   } catch (error: unknown) {
     if (error instanceof ReplayConflict) throw new SavedButNotAdopted("conflict", saved, error);
     throw error;
@@ -148,9 +171,20 @@ function adopt<TSnapshot extends ReplayableSnapshot, TSession, TChange, TRecord>
   // Synchronous from reading `current` to here, so the commit cannot lose a
   // race; what it can still do is refuse the carried session as invalid.
   try {
-    holder.commit(current, next);
+    holder.commit(current, replayed.session);
   } catch (error: unknown) {
     throw new SavedButNotAdopted("invalid", saved, error);
   }
-  return tail.length;
+  // Applied, not the tail's length: no-ops are dropped from the new session,
+  // so counting them would report pending work the holder does not have.
+  return replayed.applied;
+}
+
+/** A change recorded after the save began can be anything, JSON or not. */
+function sameChange(savedText: string, change: unknown): boolean {
+  try {
+    return canonicalJson(change) === savedText;
+  } catch {
+    return false;
+  }
 }

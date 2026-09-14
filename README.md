@@ -476,7 +476,6 @@ const saveParts = {
   replay,
   isMoved: (error: unknown) => error instanceof DocumentMovedBeforeWrite,
   changes: (session: WarSession) => session.changes,
-  intent: (change: ArmyChange) => change.intent,
 };
 
 const result = await saveSession(holder, snapshot, saveParts);
@@ -525,6 +524,9 @@ the next save:
 const result = await saveSession(holder, snapshot, saveParts);
 result.carried; // edits made during the save, still pending
 ```
+
+Carrying over compares whole recorded changes as canonical JSON, so changes
+must be plain JSON data; anything else is refused before the write.
 
 **Block.** Editing pauses. Every `holder.commit` throws `SessionLocked` until
 the save settles, whether it succeeds or fails:

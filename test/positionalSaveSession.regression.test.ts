@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import { DocumentReplay } from "../src/editing/DocumentReplay";
 import { prepareSave } from "../src/editing/prepareSave";
 import type { ChangeIntent, ReplayAdapter, ReplayableSnapshot } from "../src/editing/ReplayAdapter";
-import { saveSession } from "../src/editing/saveSession";
+import { SavedButNotAdopted, saveSession } from "../src/editing/saveSession";
 import { SessionHolder } from "../src/editing/SessionHolder";
 import type { SquashAdapter } from "../src/editing/squashChanges";
 
@@ -57,15 +57,17 @@ const update = (at: number): Change => ({ operation: "update", at, before: "A", 
 /*
  * `ChangeIntent` does not identify the target of a change. A positional
  * adapter may carry that only on TChange, so equal intents are not enough to
- * prove that the saved history remains the current history's prefix.
+ * prove that the saved history remains the current history's prefix. Whole
+ * changes are compared instead, and this one is a rewrite: the saved slot-0
+ * edit is gone, so the holder must refuse rather than guess.
  */
-it.fails("does not mistake an identical intent at another position for the saved change", async () => {
+it("does not mistake an identical intent at another position for the saved change", async () => {
   const base = snapshot(["A", "A"]);
   const initial = adapter.createSession(base);
   adapter.mutate(initial, update(0));
   const holder = new SessionHolder(initial, () => {});
 
-  await saveSession(holder, base, {
+  const saving = saveSession(holder, base, {
     prepare: (session, from) =>
       prepareSave(session, from, {
         replay,
@@ -85,8 +87,10 @@ it.fails("does not mistake an identical intent at another position for the saved
     replay,
     isMoved: () => false,
     changes: adapter.changes,
-    intent: adapter.intent,
   });
 
+  await expect(saving).rejects.toMatchObject({ reason: "rewritten" });
+  await expect(saving).rejects.toBeInstanceOf(SavedButNotAdopted);
   expect(holder.current().records).toEqual(["A", "B"]);
+  expect(holder.current().changes).toEqual([update(1)]);
 });
