@@ -12,6 +12,7 @@ export type { GoogleDriveSyncState } from "./google/useGoogleDriveSync.js";
 
 export { ChangeSummaryList } from "./editing/ChangeSummaryList.js";
 export { EditingStatusBar } from "./editing/EditingStatusBar.js";
+export type { BarAction } from "./editing/EditingStatusBar.js";
 export { SaveReviewPanel, explainRefusal } from "./editing/SaveReviewPanel.js";
 export { Modal } from "./ui/Modal.js";
 export { BuildStamp } from "./build/BuildStamp.js";

@@ -46,11 +46,12 @@ export { DocumentMovedBeforeWrite, WriteNotPermitted, WriteUnconfirmed } from ".
 export { SessionHolder, SessionCommitConflict } from "./editing/SessionHolder.js";
 export { DocumentReplay } from "./editing/DocumentReplay.js";
 export { ReplayConflict } from "./editing/ReplayConflict.js";
+export type { ReplayResult } from "./editing/DocumentReplay.js";
 export type { ReplayAdapter, ReplayableSnapshot, ChangeIntent } from "./editing/ReplayAdapter.js";
 export { squashChanges, UnsquashableHistory } from "./editing/squashChanges.js";
 export type { SquashAdapter } from "./editing/squashChanges.js";
 export { prepareSave, NothingToSave, UnrecordedMutation } from "./editing/prepareSave.js";
 export type { SavePlan } from "./editing/prepareSave.js";
-export { saveDocument } from "./editing/saveDocument.js";
-export type { SaveOutcome } from "./editing/saveDocument.js";
+export { saveDocument, ConcurrentWriterDetected } from "./editing/saveDocument.js";
+export type { SaveOutcome, SaveResult } from "./editing/saveDocument.js";
 export type { ChangeDescription } from "./editing/ChangeDescription.js";
